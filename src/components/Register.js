@@ -27,7 +27,7 @@ export default function Register({ navigation }) {
     .then((response) => response.json())
     .then((data) => {
       console.log('Success:', data);
-      navigation.navigate('Profil'); 
+      navigation.navigate('Home');
     })
     .catch((error) => {
       console.error('Error:', error);

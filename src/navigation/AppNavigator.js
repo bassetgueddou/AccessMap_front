@@ -2,7 +2,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AuthNavigator from './AuthNavigator';
-import HomeScreen from '../components/Login';
+import HomeScreen from '../components/Home';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Tab = createBottomTabNavigator();
