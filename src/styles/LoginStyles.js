@@ -35,10 +35,7 @@ export default StyleSheet.create({
       connect: {
         color: '#575DFB',
         fontSize: 30,
-        fontWeight: 'bold',
-        position: 'absolute',
-        top: 20,
-        left: 29
+        fontWeight: 'bold'
       },
       connectYou: {
         position: 'absolute',
