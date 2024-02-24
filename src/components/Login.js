@@ -3,44 +3,46 @@ import { StatusBar, Text, TextInput, View, TouchableOpacity, Image } from 'react
 import styles from '../styles/LoginStyles';
 import arobaseImage from '../../assets/arobase.png';
 import cadenasImage from '../../assets/cadenas.png';
-import googleImage from '../../assets/google.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+    const handleLogin = async () => {
+        try {
+            const response = await fetch('https://bdd3-2a02-8440-a129-acc5-5964-3481-6d3-ad2e.ngrok-free.app/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
 
-      const data = await response.json();
+            const data = await response.json();
 
-      if (response.ok) {
-       
-        navigation.navigate('Profil'); 
-      } else {
-      
-        Alert.alert('Erreur', data.message || 'Une erreur est survenue lors de la tentative de connexion.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('Erreur', 'Impossible de se connecter au serveur.');
-    }
-  };
-  
+            if (response.ok) {
+                // Supposons que data contienne un token que vous stockerez
+                await AsyncStorage.setItem('userToken', data.token);
+                navigation.navigate('Home');
+            } else {
+                Alert.alert('Erreur', data.message || 'Une erreur est survenue lors de la tentative de connexion.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <Text style={styles.connect}>Se connecter</Text>
-      <Text style={styles.connectYou}>Connectez-vous maintenant pour{"\n"}accéder votre profil !</Text>
+        <div className="text-center">
+            <Text style={styles.connect}>Se connecter</Text>
+            <br/>
+            <Text>Connectez-vous maintenant pour{"\n"}accéder votre profil !</Text>
+        </div>
       <View>
         <Text style={styles.label}>Email</Text>
         <Image source={arobaseImage} style={styles.imgInput}/>
@@ -66,7 +68,6 @@ export default function Login({ navigation }) {
           value={password}
         />
       </View>
-      <Text style={styles.forgot}>Mot de passe oublié?</Text>
       <TouchableOpacity style={styles.formButton} onPress={handleLogin}>
         <Text style={styles.textButton}>Se connecter</Text>
       </TouchableOpacity>
@@ -74,8 +75,12 @@ export default function Login({ navigation }) {
         _____________________________________________
       </Text>
       <View style={styles.flexRow}>
-        <Text>Vous n'avez pas de compte ? </Text>
-        <Text style={styles.login} onPress={() => navigation.navigate("Register")}>S’inscrire</Text>
+          <div className="text-center">
+              <Text>Mot de passe oublié?</Text>
+              <br/>
+              <Text>Vous n'avez pas de compte ? </Text>
+              <Text style={styles.login} onPress={() => navigation.navigate("Register")}>S’inscrire</Text>
+          </div>
       </View>
     </View>
   );
