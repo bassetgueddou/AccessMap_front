@@ -6,6 +6,9 @@ export default function VerificationCode({ navigation }) {
   const [code, setCode] = useState('');
 
   const handleVerifyCode = async () => {
+    if (code.length !== 6) {
+      Alert.alert("Erreur", "Le code de vérification doit contenir 6 chiffres.");
+      return;}
     try {
       const response = await fetch('http://localhost:5000/api/users/verifycode', { 
         method: 'POST',

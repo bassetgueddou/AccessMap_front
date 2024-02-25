@@ -18,9 +18,9 @@ export default function ForgotPassword({ navigation }) {
       });
   
       const data = await response.json();
-      
+    
       if (response.ok) {
-        navigation.navigate('VerificationCode');
+        navigation.navigate('VerificationCodeScreen');
       } else {
         Alert.alert("Erreur", data.message || "Une erreur est survenue");
       }
@@ -49,7 +49,7 @@ export default function ForgotPassword({ navigation }) {
         />
       </View>
       <TouchableOpacity style={styles.formButton} onPress={handleSendCode}>
-        <Text style={styles.textButton}>Envoyer</Text>
+        <Text style={styles.textButton} onPress={() => navigation.navigate('VerificationCodeScreen')}>Envoyer</Text>
       </TouchableOpacity>
     </View>
   );
