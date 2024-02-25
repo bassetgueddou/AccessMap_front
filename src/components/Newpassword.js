@@ -18,15 +18,13 @@ export default function NewPassword({ navigation, route }) {
           newPassword: newPassword,
         }),
       });
-
+  
       const data = await response.json();
       
       if (response.ok) {
-       
         Alert.alert("Succès", "Votre mot de passe a été réinitialisé avec succès.");
         navigation.navigate('Login'); 
       } else {
-   
         Alert.alert("Erreur", data.message || "Une erreur est survenue lors de la réinitialisation du mot de passe.");
       }
     } catch (error) {
@@ -34,6 +32,7 @@ export default function NewPassword({ navigation, route }) {
       Alert.alert("Erreur", "Impossible de communiquer avec le serveur pour réinitialiser le mot de passe.");
     }
   };
+  
 
   return (
     <View style={styles.container}>

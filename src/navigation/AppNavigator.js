@@ -17,7 +17,12 @@ const AppNavigator = () => {
           <Icon name="user" color={color} size={size} />
         ),
       }}/>
-
+      <Tab.Screen name="Home" component={HomeScreen} options={{
+        tabBarLabel: "Home",
+        tabBarIcon: ({ color, size }) => (
+          <Icon name="home" color={color} size={size} />
+        ),
+      }}/>
       <Tab.Screen name="Register" component={Register} options={{
         tabBarLabel: "Register",
         tabBarIcon: ({ color, size }) => (

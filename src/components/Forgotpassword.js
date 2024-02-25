@@ -16,14 +16,12 @@ export default function ForgotPassword({ navigation }) {
           email: email,
         }),
       });
-
+  
       const data = await response.json();
       
       if (response.ok) {
-      
         navigation.navigate('VerificationCode');
       } else {
-       
         Alert.alert("Erreur", data.message || "Une erreur est survenue");
       }
     } catch (error) {
@@ -31,6 +29,7 @@ export default function ForgotPassword({ navigation }) {
       Alert.alert("Erreur", "Impossible de contacter le serveur");
     }
   };
+  
 
   return (
     <View style={styles.container}>

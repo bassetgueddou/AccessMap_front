@@ -7,7 +7,6 @@ export default function VerificationCode({ navigation }) {
 
   const handleVerifyCode = async () => {
     try {
-     
       const response = await fetch('http://localhost:5000/api/users/verifycode', { 
         method: 'POST',
         headers: {
@@ -17,14 +16,12 @@ export default function VerificationCode({ navigation }) {
           code: code,
         }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
-       
-        navigation.navigate('NewPassword', { code: code }); 
+        navigation.navigate('NewPassword', { verificationCode: code }); 
       } else {
-
         Alert.alert("Erreur", data.message || "Le code de vérification est incorrect ou a expiré.");
       }
     } catch (error) {
@@ -32,6 +29,7 @@ export default function VerificationCode({ navigation }) {
       Alert.alert("Erreur", "Un problème est survenu lors de la vérification du code.");
     }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -39,7 +37,7 @@ export default function VerificationCode({ navigation }) {
       <Text style={styles.connectYou}>Nous avons envoyé un e-mail à votre compte de messagerie avec un code de vérification !</Text>
       <View>
         <Text aria-label="Mot de Passe" style={styles.label}>Code de vérification</Text>
-        <Image source={require('../cadenas.png')} style={styles.imgInput}/>
+        <Image source={require('../../assets/cadenas.png')} style={styles.imgInput}/>
         <TextInput
           style={styles.formInput}
           onChangeText={setCode}
