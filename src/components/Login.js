@@ -4,6 +4,7 @@ import styles from '../styles/LoginStyles';
 import arobaseImage from '../../assets/arobase.png';
 import cadenasImage from '../../assets/cadenas.png';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ForgotPassword from './Forgotpassword';
 
 
 
@@ -13,7 +14,7 @@ export default function Login({ navigation }) {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('https://bdd3-2a02-8440-a129-acc5-5964-3481-6d3-ad2e.ngrok-free.app/api/users/login', {
+            const response = await fetch('http://localhost:5000/api/users/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -24,7 +25,7 @@ export default function Login({ navigation }) {
             const data = await response.json();
 
             if (response.ok) {
-                // Supposons que data contienne un token que vous stockerez
+               
                 await AsyncStorage.setItem('userToken', data.token);
                 navigation.navigate('Home');
             } else {
@@ -76,7 +77,7 @@ export default function Login({ navigation }) {
       </Text>
       <View style={styles.flexRow}>
           <div className="text-center">
-              <Text>Mot de passe oublié?</Text>
+          <Text style={styles.login} onPress={() => navigation.navigate('ForgotPasswordScreen')}>Mot de passe oublié?</Text>
               <br/>
               <Text>Vous n'avez pas de compte ? </Text>
               <Text style={styles.login} onPress={() => navigation.navigate("Register")}>S’inscrire</Text>

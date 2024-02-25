@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { StatusBar, Text, TextInput, View, TouchableOpacity, Image, Picker } from 'react-native';
 import arobaseImage from '../../assets/arobase.png';
 import cadenasImage from '../../assets/cadenas.png';
-
 import styles from '../styles/RegisterStyles';
 
 export default function Register({ navigation }) {
   const [nom, setNom] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState('');
+  const [handicapType, setHandicapType] = useState('');
 
   const handleRegister = () => {
     fetch('http://localhost:5000/api/users/register', {
@@ -21,7 +20,7 @@ export default function Register({ navigation }) {
         username: nom,
         email,
         password,
-        
+        handicapType, // Ajout du champ handicapType dans la requête
       }),
     })
     .then((response) => response.json())
@@ -32,6 +31,7 @@ export default function Register({ navigation }) {
     .catch((error) => {
       console.error('Error:', error);
     });
+  };
 
   return (
     <View style={styles.container}>
@@ -77,9 +77,15 @@ export default function Register({ navigation }) {
       <View style={styles.picker}>
         <Text style={styles.labelHandicap}>Type de Handicap</Text>
         <Picker
-          selectedValue={selectedLanguage}
-          onValueChange={(itemValue, itemIndex) => setSelectedLanguage(itemValue)}
+          selectedValue={handicapType}
+          onValueChange={(itemValue, itemIndex) => setHandicapType(itemValue)}
           style={{ height: 50, width: 350 }}>
+          <Picker.Item label="Aucun" value="" />
+          <Picker.Item label="Moteur" value="moteur" />
+          <Picker.Item label="Visuel" value="visuel" />
+          <Picker.Item label="Auditif" value="auditif" />
+          <Picker.Item label="Cognitif" value="cognitif" />
+          <Picker.Item label="Autre" value="autre" />
         </Picker>
       </View>
       <TouchableOpacity style={styles.formButton} onPress={handleRegister}>
@@ -92,4 +98,3 @@ export default function Register({ navigation }) {
     </View>
   );
 }
-};

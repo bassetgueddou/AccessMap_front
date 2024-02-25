@@ -33,12 +33,13 @@ export default function Home({ navigation }) {
 
   return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>Je suis dans la page de profil</Text>
+          <Text>Je suis dans la page home</Text>
+          <br></br>
           <Image
               source={{
                   uri: "https://media.giphy.com/media/tJqyalvo9ahykfykAj/giphy.gif"
               }}
-              style={{ width: 200, height: 200 }} // Ajustez selon vos besoins
+              style={{ width: 200, height: 200 }} 
           />
       </View>
   );

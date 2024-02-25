@@ -38,7 +38,7 @@ export default function ForgotPassword({ navigation }) {
       <Text style={styles.connectYou}>Tapez votre email afin d'obtenir un code de vérification !</Text>
       <View>
         <Text aria-label="Email" style={styles.label}>Email</Text>
-        <Image source={require('../arobase.png')} style={styles.imgInput}/>
+        <Image source={require('../../assets/arobase.png')} style={styles.imgInput}/>
         <TextInput
           style={styles.formInput}
           keyboardType="email-address" 
