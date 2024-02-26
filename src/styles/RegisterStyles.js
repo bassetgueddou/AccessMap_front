@@ -78,7 +78,9 @@ export default StyleSheet.create({
       }, 
       picker: {
         position: 'absolute',
-        top: 330
+        top: 400, 
+        width: '100%', 
+        alignItems: 'center' 
       }, 
       viewPassword: {
         marginBottom : 170

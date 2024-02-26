@@ -1,14 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar, Text, TextInput, View, TouchableOpacity, Image, Picker } from 'react-native';
 import arobaseImage from '../../assets/arobase.png';
 import cadenasImage from '../../assets/cadenas.png';
 import styles from '../styles/RegisterStyles';
+import { useNavigationBar } from '../context/NavigationContext';
 
 export default function Register({ navigation }) {
   const [nom, setNom] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [handicapType, setHandicapType] = useState('');
+  const { setNavigationBarVisible } = useNavigationBar();
+
+  useEffect(() => {
+    
+    const unsubscribeFocus = navigation.addListener('focus', () => {
+      setNavigationBarVisible(false);
+    });
+
+    
+    const unsubscribeBlur = navigation.addListener('blur', () => {
+      setNavigationBarVisible(true);
+    });
+
+    return () => {
+      
+      unsubscribeFocus();
+      unsubscribeBlur();
+    };
+  }, [navigation]);
 
   const handleRegister = () => {
     fetch('http://localhost:5000/api/users/register', {
@@ -20,14 +40,15 @@ export default function Register({ navigation }) {
         username: nom,
         email,
         password,
-        handicapType, // Ajout du champ handicapType dans la requête
+        handicapType,
       }),
     })
     .then((response) => response.json())
     .then((data) => {
       console.log('Success:', data);
       navigation.navigate('Home');
-    })
+    }) 
+    
     .catch((error) => {
       console.error('Error:', error);
     });
@@ -73,6 +94,7 @@ export default function Register({ navigation }) {
           onChangeText={setPassword}
           value={password}
         />
+        <br></br>
       </View>
       <View style={styles.picker}>
         <Text style={styles.labelHandicap}>Type de Handicap</Text>

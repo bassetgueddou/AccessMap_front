@@ -1,10 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
 import styles from '../styles/NewpasswordStyle'; 
+import { useNavigationBar } from '../context/NavigationContext';
 
 export default function NewPassword({ navigation, route }) {
   const [newPassword, setNewPassword] = useState('');
   const { verificationCode } = route.params; 
+  const { setNavigationBarVisible } = useNavigationBar();
+
+  useEffect(() => {
+    
+    const unsubscribeFocus = navigation.addListener('focus', () => {
+      setNavigationBarVisible(false);
+    });
+
+    
+    const unsubscribeBlur = navigation.addListener('blur', () => {
+      setNavigationBarVisible(true);
+    });
+
+    return () => {
+      
+      unsubscribeFocus();
+      unsubscribeBlur();
+    };
+  }, [navigation]);
+
 
   const handleSetNewPassword = async () => {
     try {

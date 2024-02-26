@@ -1,49 +1,63 @@
-import React, { useState } from 'react';
-import { StatusBar, Text, TextInput, View, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StatusBar, Text, TextInput, View, TouchableOpacity, Image, Alert } from 'react-native';
 import styles from '../styles/LoginStyles';
 import arobaseImage from '../../assets/arobase.png';
 import cadenasImage from '../../assets/cadenas.png';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ForgotPassword from './Forgotpassword';
-
-
+import { useNavigationBar } from '../context/NavigationContext';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { setNavigationBarVisible } = useNavigationBar();
 
-    const handleLogin = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/api/users/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
+  useEffect(() => {
+    // Cacher la barre de navigation quand l'écran est en focus
+    const unsubscribeFocus = navigation.addListener('focus', () => {
+      setNavigationBarVisible(false);
+    });
 
-            const data = await response.json();
+    // Réafficher la barre de navigation quand l'écran perd le focus
+    const unsubscribeBlur = navigation.addListener('blur', () => {
+      setNavigationBarVisible(true);
+    });
 
-            if (response.ok) {
-               
-                await AsyncStorage.setItem('userToken', data.token);
-                navigation.navigate('Home');
-            } else {
-                Alert.alert('Erreur', data.message || 'Une erreur est survenue lors de la tentative de connexion.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
+    return () => {
+      // Se désabonner des événements lors du démontage du composant
+      unsubscribeFocus();
+      unsubscribeBlur();
     };
+  }, [navigation]);
+
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        await AsyncStorage.setItem('userToken', data.token);
+        navigation.navigate('Home');
+      } else {
+        Alert.alert('Erreur', data.message || 'Une erreur est survenue lors de la tentative de connexion.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      Alert.alert("Erreur", "Un problème est survenu lors de la connexion.");
+    }
+  };
 
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-        <div className="text-center">
-            <Text style={styles.connect}>Se connecter</Text>
-            <br/>
-            <Text>Connectez-vous maintenant pour{"\n"}accéder votre profil !</Text>
-        </div>
+      <Text style={styles.connect}>Se connecter</Text>
+      <Text>Connectez-vous maintenant pour{"\n"}accéder votre profil !</Text>
       <View>
         <Text style={styles.label}>Email</Text>
         <Image source={arobaseImage} style={styles.imgInput}/>
@@ -72,16 +86,10 @@ export default function Login({ navigation }) {
       <TouchableOpacity style={styles.formButton} onPress={handleLogin}>
         <Text style={styles.textButton}>Se connecter</Text>
       </TouchableOpacity>
-      <Text numberOfLines={1} style={styles.marginBottom}>
-        _____________________________________________
-      </Text>
       <View style={styles.flexRow}>
-          <div className="text-center">
-          <Text style={styles.login} onPress={() => navigation.navigate('ForgotPasswordScreen')}>Mot de passe oublié?</Text>
-              <br/>
-              <Text>Vous n'avez pas de compte ? </Text>
-              <Text style={styles.login} onPress={() => navigation.navigate("Register")}>S’inscrire</Text>
-          </div>
+        <Text style={styles.login} onPress={() => navigation.navigate('ForgotPasswordScreen')}>Mot de passe oublié?</Text>
+        <Text>Vous n'avez pas de compte ? </Text>
+        <Text style={styles.login} onPress={() => navigation.navigate("Register")}>S’inscrire</Text>
       </View>
     </View>
   );

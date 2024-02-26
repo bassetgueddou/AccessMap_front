@@ -1,9 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
 import styles from '../styles/VerificationcodeStyle';
+import { useNavigationBar } from '../context/NavigationContext';
+
+
 
 export default function VerificationCode({ navigation }) {
   const [code, setCode] = useState('');
+  const { setNavigationBarVisible } = useNavigationBar();
+
+  useEffect(() => {
+    
+    const unsubscribeFocus = navigation.addListener('focus', () => {
+      setNavigationBarVisible(false);
+    });
+
+    
+    const unsubscribeBlur = navigation.addListener('blur', () => {
+      setNavigationBarVisible(true);
+    });
+
+    return () => {
+      
+      unsubscribeFocus();
+      unsubscribeBlur();
+    };
+  }, [navigation]);
+
 
   const handleVerifyCode = async () => {
     if (code.length !== 6) {

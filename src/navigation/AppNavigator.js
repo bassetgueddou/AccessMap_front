@@ -5,12 +5,21 @@ import AuthNavigator from './AuthNavigator';
 import HomeScreen from '../components/Home';
 import Register from '../components/Register'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useNavigationBar } from '../context/NavigationContext';
 
 const Tab = createBottomTabNavigator();
 
+
+
 const AppNavigator = () => {
+  const { isNavigationBarVisible } = useNavigationBar();
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
+    
+    <Tab.Navigator screenOptions={{
+      headerShown: false,
+      tabBarStyle: { display: isNavigationBarVisible ? 'flex' : 'none' },
+    }}>
+
       <Tab.Screen name="Auth" component={AuthNavigator} options={{
         tabBarLabel: "Se connecter",
         tabBarIcon: ({ color, size }) => (
@@ -34,5 +43,6 @@ const AppNavigator = () => {
     </Tab.Navigator>
   );
 };
+
 
 export default AppNavigator;

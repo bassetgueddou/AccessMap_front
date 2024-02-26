@@ -1,9 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import styles from '../styles/ForgotpasswordStyle';
+import { useNavigationBar } from '../context/NavigationContext';
 
 export default function ForgotPassword({ navigation }) {
   const [email, setEmail] = useState('');
+  const { setNavigationBarVisible } = useNavigationBar();
+
+  useEffect(() => {
+    
+    const unsubscribeFocus = navigation.addListener('focus', () => {
+      setNavigationBarVisible(false);
+    });
+
+    
+    const unsubscribeBlur = navigation.addListener('blur', () => {
+      setNavigationBarVisible(true);
+    });
+
+    return () => {
+      
+      unsubscribeFocus();
+      unsubscribeBlur();
+    };
+  }, [navigation]);
+
 
   const handleSendCode = async () => {
     try {
