@@ -12,18 +12,18 @@ export default function Login({ navigation }) {
   const { setNavigationBarVisible } = useNavigationBar();
 
   useEffect(() => {
-    // Cacher la barre de navigation quand l'écran est en focus
+    
     const unsubscribeFocus = navigation.addListener('focus', () => {
       setNavigationBarVisible(false);
     });
 
-    // Réafficher la barre de navigation quand l'écran perd le focus
+    
     const unsubscribeBlur = navigation.addListener('blur', () => {
       setNavigationBarVisible(true);
     });
 
     return () => {
-      // Se désabonner des événements lors du démontage du composant
+      
       unsubscribeFocus();
       unsubscribeBlur();
     };
