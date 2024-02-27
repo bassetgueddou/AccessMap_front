@@ -1,82 +1,102 @@
-import React from 'react';
-import { SafeAreaView, View, Text, StyleSheet, Button, FlatList } from 'react-native';
-import { Card, Title, Paragraph } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import React, { useState, useContext } from 'react';
+import { Text, TextInput, View, Button, StyleSheet, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Pour stocker/lire l'ID utilisateur
+import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 
-const HomeScreen = () => {
-  const reports = [
-    {
-      id: '1',
-      title: 'Ascenseur en panne à Gare de Lyon - Métro 14',
-      profile: 'Profil 1234',
-      accessibility: '1/5',
+// Composant pour la sélection de la localisation sur la carte
+function LocationPicker({ onLocationSelected }) {
+  useMapEvents({
+    click(e) {
+      onLocationSelected(e.latlng);
     },
- 
-  ];
+  });
+
+  return null;
+}
+
+const Signaler = () => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState(null);
+  // Omit image handling for simplicity, add it according to your project's needs
+
+  const handleSubmit = async () => {
+    const userId = await AsyncStorage.getItem('userId'); // Assurez-vous que l'ID utilisateur est stocké lors de la connexion
+    if (!title || !description || !location) {
+      Alert.alert("Erreur", "Tous les champs sont obligatoires.");
+      return;
+    }
+
+    // Création de l'objet FormData pour l'envoi
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('location', JSON.stringify({
+      type: 'Point',
+      coordinates: [location.lng, location.lat], // Notez l'ordre lng, lat pour GeoJSON
+    }));
+    // Omettre la gestion de l'image pour simplifier
+    formData.append('createdBy', userId);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/reports', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const responseData = await response.json();
+      if (!response.ok) throw new Error(responseData.message);
+      Alert.alert("Succès", "Le signalement a été envoyé avec succès.");
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Erreur", "Un problème est survenu lors de l'envoi du signalement.");
+    }
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.welcomeText}>Signaler</Text>
-        <Text style={styles.nameText}>Signaler</Text>
+    <View style={styles.container}>
+      <Text style={styles.label}>Titre:</Text>
+      <TextInput style={styles.input} value={title} onChangeText={setTitle} />
+      <Text style={styles.label}>Description:</Text>
+      <TextInput style={styles.input} value={description} onChangeText={setDescription} multiline />
+      <View style={styles.mapContainer}>
+        <MapContainer center={[45.4215, -75.6972]} zoom={12} style={styles.map}>
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <LocationPicker onLocationSelected={setLocation} />
+        </MapContainer>
       </View>
-      <Button
-        title="Commencez à utiliser AccessMap"
-        onPress={() => {}}
-        color="#6200ee"
-      />
-      <FlatList
-        data={reports}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <Card style={styles.card}>
-            <Card.Content>
-              <Title style={styles.cardTitle}>{item.title}</Title>
-              <Paragraph>{item.profile}</Paragraph>
-              <Paragraph>Niveau d'accessibilité {item.accessibility}</Paragraph>
-            </Card.Content>
-          </Card>
-        )}
-      />
-      <View style={styles.navBar}>
-        <Icon name="home-outline" size={30} color="#6200ee" />
-        <Icon name="alert-circle-outline" size={30} color="#6200ee" />
-        <Icon name="file-document-outline" size={30} color="#6200ee" />
-        <Icon name="account-outline" size={30} color="#6200ee" />
-      </View>
-    </SafeAreaView>
+      <Button title="Signaler" onPress={handleSubmit} />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20,
   },
-  header: {
-    alignItems: 'center',
-    marginTop: 20,
+  label: {
+    marginBottom: 5,
   },
-  welcomeText: {
-    fontSize: 22,
-    fontWeight: 'bold',
+  input: {
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
   },
-  nameText: {
-    fontSize: 18,
-    color: '#6200ee',
+  mapContainer: {
+    height: 300,
+    width: '100%',
+    marginBottom: 20,
   },
-  card: {
-    margin: 10,
-    borderRadius: 8,
-  },
-  cardTitle: {
-    color: '#6200ee',
-  },
-  navBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-    backgroundColor: '#f0f0f0',
+  map: {
+    height: '100%',
+    width: '100%',
   },
 });
 
-export default HomeScreen;
+export default Signaler;

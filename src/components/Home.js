@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Button, FlatList } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
@@ -13,7 +14,13 @@ const HomeScreen = () => {
     },
  
   ];
+const handleLogout = async () => {
+    await AsyncStorage.removeItem('userToken');
+    
+    Alert.alert('Déconnexion', 'Vous avez été déconnecté.');
+    
 
+  };
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -34,8 +41,10 @@ const HomeScreen = () => {
               <Title style={styles.cardTitle}>{item.title}</Title>
               <Paragraph>{item.profile}</Paragraph>
               <Paragraph>Niveau d'accessibilité {item.accessibility}</Paragraph>
+              <Text onPress={handleLogout}>Déconnexion</Text>
             </Card.Content>
           </Card>
+          
         )}
       />
       <View style={styles.navBar}>
@@ -44,7 +53,10 @@ const HomeScreen = () => {
         <Icon name="file-document-outline" size={30} color="#6200ee" />
         <Icon name="account-outline" size={30} color="#6200ee" />
       </View>
+      
     </SafeAreaView>
+
+    
   );
 };
 
